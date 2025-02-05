@@ -15,7 +15,6 @@ pipeline {
                 sh 'sudo apt-get update && sudo apt-get install terraform'
             }
         }
-        stages{
         stage('checkout from GIT'){
             steps{
                git branch: 'main', credentialsId: 'github-cred', url: 'https://github.com/yoloxsta/s3_jenkins.git'
@@ -42,4 +41,4 @@ pipeline {
     //     }
     // }
 }
-}
+

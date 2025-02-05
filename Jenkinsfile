@@ -1,7 +1,15 @@
 properties([
     parameters([
-        string(defaultValue: 'variables.tfvars', description: 'Specify the file name', name: 'File-Name'),
-        choice(choices: ['apply', 'destroy'], description: 'Select Terraform action', name: 'Terraform-Action')
+        string(
+            defaultValue: 'variables.tfvars',
+            description: 'Specify the file name',
+            name: 'File-Name'
+        ),
+        choice(
+            choices: ['apply', 'destroy'],
+            description: 'Select Terraform action',
+            name: 'Terraform-Action'
+        )
     ])
 ])
 
@@ -16,9 +24,8 @@ pipeline {
         stage('Initializing Terraform') {
             steps {
                 withAWS(credentials: 'aws-key', region: 'us-east-1') {
-                        script {
-                            sh 'terraform init'
-                        }
+                    script {
+                        sh 'terraform init'
                     }
                 }
             }
@@ -47,7 +54,7 @@ pipeline {
         }
         stage('Terraform Action') {
             steps {
-                withAWS(credentials: 'aws-key', region: 'us-east-1') { 
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
                     script {
                         echo "${params.'Terraform-Action'}"
                         dir('eks-terraform') {
@@ -66,3 +73,4 @@ pipeline {
             }
         }
     }
+}

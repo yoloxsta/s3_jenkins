@@ -1,44 +1,69 @@
+properties([
+    parameters([
+        string(defaultValue: 'variables.tfvars', description: 'Specify the file name', name: 'File-Name'),
+        choice(choices: ['apply', 'destroy'], description: 'Select Terraform action', name: 'Terraform-Action')
+    ])
+])
+
 pipeline {
     agent any
-
-    environment {
-        AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')  // Replace with your AWS credentials ID
-        AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')  // Replace with your AWS credentials ID
-    }
-
     stages {
-        stage('Checkout Code') {
+        stage('Checkout from Git') {
             steps {
-                // Checkout the code from your repository
-                checkout scm
+                git branch: 'main', url: 'https://github.com/yoloxsta/s3_jenkins.git'
             }
         }
-        stage('Install Terraform') {
+        stage('Initializing Terraform') {
             steps {
-                // Install Terraform without using sudo
-                sh 'curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -'
-                sh 'apt-add-repository "deb https://apt.releases.hashicorp.com $(lsb_release -cs) main"'
-                sh 'apt-get update && apt-get install terraform'
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
+                        script {
+                            sh 'terraform init'
+                        }
+                    }
+                }
             }
         }
-        stage('Terraform Init') {
+        stage('Validate Terraform Code') {
             steps {
-                // Initialize Terraform
-                sh 'terraform init'
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
+                    dir('eks-terraform') {
+                        script {
+                            sh 'terraform validate'
+                        }
+                    }
+                }
             }
         }
-        stage('Terraform Apply') {
+        stage('Terraform Plan') {
             steps {
-                // Apply Terraform configuration to create the S3 bucket
-                sh 'terraform apply -auto-approve'
+                withAWS(credentials: 'aws-key', region: 'us-east-1') {
+                    dir('eks-terraform') {
+                        script {
+                            sh "terraform plan -var-file=${params.'File-Name'}"
+                        }
+                    }
+                }
             }
         }
-    }
-
-    post {
-        always {
-            // Clean up, can be useful for sensitive info or logging
-            cleanWs()
+        stage('Terraform Action') {
+            steps {
+                withAWS(credentials: 'aws-key', region: 'us-east-1') { 
+                    script {
+                        echo "${params.'Terraform-Action'}"
+                        dir('eks-terraform') {
+                            script {
+                                if (params.'Terraform-Action' == 'apply') {
+                                    sh "terraform apply -auto-approve -var-file=${params.'File-Name'}"
+                                } else if (params.'Terraform-Action' == 'destroy') {
+                                    sh "terraform destroy -auto-approve -var-file=${params.'File-Name'}"
+                                } else {
+                                    error "Invalid value for Terraform-Action: ${params.'Terraform-Action'}"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -14,7 +14,11 @@
 // ])
 
 pipeline {
-    agent any
+    agent any {
+            docker {
+            image 'hashicorp/terraform:latest' // Ensure this image is being used // Optional if you need Docker in Docker
+        }
+    }
     stages{
         stage('Checkout from Git') {
             steps {

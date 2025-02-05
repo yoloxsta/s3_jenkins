@@ -21,6 +21,14 @@ pipeline {
                 git branch: 'main', url: 'https://github.com/yoloxsta/s3_jenkins.git'
             }
         }
+        stage('Check Terraform Version') {
+             steps {
+                     script {
+                        sh 'terraform -version'
+        }
+    }
+}
+
         stage('Initializing Terraform') {
             steps {
                 withAWS(credentials: 'aws-key', region: 'us-east-1') {

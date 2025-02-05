@@ -7,17 +7,18 @@ pipeline {
     }
 
     stages {
-        stage('Install Terraform') {
+        stage('Checkout Code') {
             steps {
-                // Install Terraform on the Jenkins agent/container
-                sh 'curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -'
-                sh 'sudo apt-add-repository "deb https://apt.releases.hashicorp.com $(lsb_release -cs) main"'
-                sh 'sudo apt-get update && sudo apt-get install terraform'
+                // Checkout the code from your repository
+                checkout scm
             }
         }
-        stage('checkout from GIT'){
-            steps{
-               git branch: 'main', credentialsId: 'github-cred', url: 'https://github.com/yoloxsta/s3_jenkins.git'
+        stage('Install Terraform') {
+            steps {
+                // Install Terraform without using sudo
+                sh 'curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -'
+                sh 'apt-add-repository "deb https://apt.releases.hashicorp.com $(lsb_release -cs) main"'
+                sh 'apt-get update && apt-get install terraform'
             }
         }
         stage('Terraform Init') {
@@ -34,11 +35,10 @@ pipeline {
         }
     }
 
-    // post {
-    //     always {
-    //         // Clean up, can be useful for sensitive info or logging
-    //         cleanWs()
-    //     }
-    // }
+    post {
+        always {
+            // Clean up, can be useful for sensitive info or logging
+            cleanWs()
+        }
+    }
 }
-

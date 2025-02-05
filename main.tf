@@ -7,7 +7,7 @@ kind: Pod
 spec:
   containers:
     - name: terraform
-      image: hashicorp/terraform:latest
+      image: hashicorp/terraform:1.4.5  // Use a known stable version
       command: ['cat']
       tty: true
       env:

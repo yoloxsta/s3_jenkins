@@ -1,28 +1,34 @@
-pipeline {
+pipeline{
     agent any
-    environment {
-        AWS_REGION = 'us-east-1'
+    tools {
+        terraform 'terraform'
     }
-    stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/yoloxsta/s3_jenkins.git'
+    stages{
+        stage('checkout from GIT'){
+            steps{
+               git branch: 'main', credentialsId: 'github-cred', url: 'https://github.com/yoloxsta/s3_jenkins.git'
             }
         }
-        stage('Init') {
-            steps {
+        stage('Terraform Init'){
+            steps{
                 sh 'terraform init'
             }
         }
-        stage('Plan') {
-            steps {
-                sh 'terraform plan -out=tfplan'
+        stage('Terraform Plan'){
+            steps{
+                sh 'terraform plan'
             }
         }
-        stage('Apply') {
-            steps {
-                sh 'terraform apply -auto-approve tfplan'
+         stage('Terraform Apply'){
+            steps{
+                sh 'terraform apply --auto-approve'
             }
         }
+        // stage('Terraform Destroy'){
+        //     steps{
+        //         sh 'terraform destroy --auto-approve'
+        //     }
+        // }
+       
     }
 }

@@ -35,11 +35,11 @@ pipeline {
         }
     }
 
-    post {
-        always {
-            // Clean up, can be useful for sensitive info or logging
-            cleanWs()
-        }
-    }
+    // post {
+    //     always {
+    //         // Clean up, can be useful for sensitive info or logging
+    //         cleanWs()
+    //     }
+    // }
 }
 }

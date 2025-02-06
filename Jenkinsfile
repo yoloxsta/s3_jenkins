@@ -36,18 +36,10 @@ spec:
                     script 
                     {
                         sh 'terraform init'
+                        sh 'terraform plan'
+                        sh 'terraform apply -auto-approve'
                     }
                 }
-            }
-        }
-        stage('Terraform Plan'){
-            steps{
-                sh 'terraform plan'
-            }
-        }
-        stage('Terraform Apply'){
-            steps{
-                sh 'terraform plan -auto-approve'
             }
         }
     }

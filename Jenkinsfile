@@ -1,76 +1,34 @@
-// properties([
-//     parameters([
-//         string(
-//             defaultValue: 'variables.tfvars',
-//             description: 'Specify the file name',
-//             name: 'File-Name'
-//         ),
-//         choice(
-//             choices: ['apply', 'destroy'],
-//             description: 'Select Terraform action',
-//             name: 'Terraform-Action'
-//         )
-//     ])
-// ])
-
-pipeline {
-    agent any {
-            docker {
-            image 'hashicorp/terraform:latest' // Ensure this image is being used // Optional if you need Docker in Docker
-        }
+pipeline{
+    agent any
+    tools {
+        terraform 'terraform'
     }
     stages{
-        stage('Checkout from Git') {
-            steps {
-                git branch: 'main', url: 'https://github.com/yoloxsta/s3_jenkins.git'
+        stage('checkout from GIT'){
+            steps{
+               git branch: 'main', credentialsId: 'github-cred', url: 'https://github.com/yoloxsta/s3_jenkins.git'
             }
         }
-        stage('Check Terraform Version') {
-             steps {
-                     script {
-                        sh 'terraform -version'
+        stage('Terraform Init'){
+            steps{
+                sh 'terraform init'
+            }
         }
+        stage('Terraform Plan'){
+            steps{
+                sh 'terraform plan'
+            }
+        }
+         stage('Terraform Apply'){
+            steps{
+                sh 'terraform apply --auto-approve'
+            }
+        }
+        // stage('Terraform Destroy'){
+        //     steps{
+        //         sh 'terraform destroy --auto-approve'
+        //     }
+        // }
+       
     }
-}
-
-        stage('Initializing Terraform') {
-            steps {
-                withAWS(credentials: 'aws-key', region: 'us-east-1') {
-                    script {
-                        sh 'terraform init'
-                    }
-                }
-            }
-        }
-        stage('Validate Terraform Code') {
-            steps {
-                withAWS(credentials: 'aws-key', region: 'us-east-1') {
-                        script {
-                            sh 'terraform validate'
-                        }
-                    }
-                }
-            }
-        
-        stage('Terraform Plan') {
-            steps {
-                withAWS(credentials: 'aws-key', region: 'us-east-1') {
-                        script {
-                            sh "terraform plan -var-file=${params.'File-Name'}"
-                        }
-                    }
-                }
-            }
-        stage('Terraform Action') {
-            steps {
-                withAWS(credentials: 'aws-key', region: 'us-east-1') {
-                        script {
-                            sh "terraform plan -var-file=${params.'File-Name'}"
-                
-                 }
-             }
-         }
-     }
-
-   }
 }

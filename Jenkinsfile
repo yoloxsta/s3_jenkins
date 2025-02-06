@@ -38,7 +38,7 @@ spec:
                         sh 'terraform init'
                         // sh 'terraform plan -var-file="terraform.tfvars"'
                         // sh 'terraform apply -var-file="terraform.tfvars" -auto-approve'
-                        sh 'terraform destroy -var-file="terraform.tfvars" -auto-approve'
+                        sh 'terraform destroy -auto-approve'
                     }
                 }
             }

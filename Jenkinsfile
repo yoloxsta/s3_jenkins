@@ -26,7 +26,7 @@ spec:
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/yoloxsta/s3_jenkins.git' // Update with your repo
+                git branch: 'main', credentialsId: 'github-cred', url: 'https://github.com/yoloxsta/s3_jenkins.git'
             }
         }
 

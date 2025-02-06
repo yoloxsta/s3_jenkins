@@ -4,7 +4,7 @@ provider "aws" {
 
 resource "aws_s3_bucket" "example" {
   bucket = var.bucket_name
-  # acl    = "private"
+   acl    = "private"
 
   tags = {
     Name        = "MyBucket"

@@ -42,39 +42,20 @@ spec:
                 }
             }
         }
-        stage('Destroy S3 Bucket') {
-            steps {
-                withCredentials([[ 
-                $class: 'AmazonWebServicesCredentialsBinding',
-                accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
-                credentialsId: 'aws-key']]) 
-                {
-                    script {
-                        sh 'terraform destroy -var-file="terraform.tfvars" -auto-approve'
-                    }
-                }
-            }
-        }
+        // stage('Destroy S3 Bucket') {
+        //     steps {
+        //         withCredentials([[ 
+        //         $class: 'AmazonWebServicesCredentialsBinding',
+        //         accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+        //         secretKeyVariable: 'AWS_SECRET_ACCESS_KEY',
+        //         credentialsId: 'aws-key']]) 
+        //         {
+        //             script {
+        //                 sh 'terraform destroy -var-file="terraform.tfvars" -auto-approve'
+        //             }
+        //         }
+        //     }
+        // }
     }
 }
 
-//         stage('Terraform Init') {
-//             steps {
-//                 sh 'terraform init'
-//             }
-//         }
-
-//         stage('Terraform Plan') {
-//             steps {
-//                 sh 'terraform plan -var="aws_access_key=${AWS_CREDENTIALS_USR}" -var="aws_secret_key=${AWS_CREDENTIALS_PSW}"'
-//             }
-//         }
-
-//         stage('Terraform Apply') {
-//             steps {
-//                 sh 'terraform apply -auto-approve -var="aws_access_key=${AWS_CREDENTIALS_USR}" -var="aws_secret_key=${AWS_CREDENTIALS_PSW}"'
-//             }
-//         }
-//     }
-// }

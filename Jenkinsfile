@@ -36,7 +36,7 @@ spec:
                     script 
                     {
                         sh 'terraform init'
-                        sh 'terraform plan'
+                        sh 'terraform plan -var-file="terraform.tfvars"'
                     }
                 }
             }

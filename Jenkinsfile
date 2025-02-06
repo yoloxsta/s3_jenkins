@@ -35,7 +35,7 @@ spec:
                 {
                     script 
                     {
-                        // sh 'terraform init'
+                        sh 'terraform init'
                         // sh 'terraform plan'
                         sh 'terraform destroy -auto-approve'
                     }

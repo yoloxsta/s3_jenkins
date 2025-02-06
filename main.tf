@@ -1,13 +1,13 @@
 provider "aws" {
-  region = "us-east-1"
+  region = "us-west-2"  # Replace with your desired region
 }
 
 resource "aws_s3_bucket" "example" {
-  bucket = "yoloxstaaaay"
+  bucket = var.bucket_name
+  acl    = "private"
 
   tags = {
-    Name        = "MyS3Bucket"
+    Name        = "MyBucket"
     Environment = "Dev"
   }
 }
-
